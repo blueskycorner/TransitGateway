@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Test TG - VPC
+
+Parameters:
+  ProjectName:
+    Description: project name
+    Type: String
+  NetworkClassB:
+    Description: Network class B
+    Type: String
+
+Mappings:
+  RouteTableValues:
+    RouteTable1:
+      classB1: 2
+      classB2: 3
+    RouteTable2:
+      classB1: 1
+      classB2: 3
+    RouteTable3:
+      classB1: 1
+      classB2: 2
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Sub 10.${NetworkClassB}.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+      - Key: Name
+        Value: !Sub VPC${NetworkClassB}
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  SubnetPublicA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs ]
+      CidrBlock: !Sub 10.${NetworkClassB}.0.0/24
+      VpcId: !Ref VPC
+
+  SubnetPrivateA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs ]
+      CidrBlock: !Sub 10.${NetworkClassB}.2.0/24
+      VpcId: !Ref VPC
+
+  RouteTablePublic:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub RTPublic${NetworkClassB}A
+
+  RouteTableAssociationPublicA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPublicA
+      RouteTableId: !Ref RouteTablePublic
+
+  RouteTablePublicInternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  # RouteTablePublicRoute1:
+  #   Type: AWS::EC2::Route
+  #   DependsOn: VPCGatewayAttachment
+  #   Properties:
+  #     RouteTableId: !Ref RouteTablePublic
+  #     DestinationCidrBlock: 10.0.0.0/16
+  #     GatewayId: !Ref InternetGateway
+
+  RouteTablePrivate:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub RTPrivate${NetworkClassB}A
+
+  RouteTableAssociationPrivateA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPrivateA
+      RouteTableId: !Ref RouteTablePrivate
+
+Outputs:
+  OutputVPC:
+    Description: VPC
+    Value: !Ref VPC
+  OutputPublicSubnetA:
+    Description: VPC-PublicSubnetA
+    Value: !Ref SubnetPublicA
+  OutputRTPublic:
+    Description: Route Table Public
+    Value: !Ref RouteTablePublic

@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Test TG
+
+Parameters:
+  ProjectName:
+    Description: Project name used for naming and tagging
+    Type: String
+    Default: testTG
+  TemplateBucket:
+    Description: S3 bucket from which nested templates are fetched
+    Type: String
+
+Resources:
+  vpc1:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/testTG/vpc.yaml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        NetworkClassB: 1
+        
+  vpc2:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/testTG/vpc.yaml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        NetworkClassB: 2
+        
+  vpc3:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/testTG/vpc.yaml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        NetworkClassB: 3
+
+  tg:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3.amazonaws.com/${TemplateBucket}/testTG/tg.yaml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        vpc1: !GetAtt vpc1.Outputs.OutputVPC
+        vpc1PublicSubnetA: !GetAtt vpc1.Outputs.OutputPublicSubnetA
+        routeTablePublic1: !GetAtt vpc1.Outputs.OutputRTPublic
+        vpc2: !GetAtt vpc2.Outputs.OutputVPC
+        vpc2PublicSubnetA: !GetAtt vpc2.Outputs.OutputPublicSubnetA
+        routeTablePublic2: !GetAtt vpc2.Outputs.OutputRTPublic
+        vpc3: !GetAtt vpc3.Outputs.OutputVPC
+        vpc3PublicSubnetA: !GetAtt vpc3.Outputs.OutputPublicSubnetA
+        routeTablePublic3: !GetAtt vpc3.Outputs.OutputRTPublic
+
+# Outputs:
+#   # GLOBAL OUTPUTS
+#   EipBastion:
+#     Description: Bastion EIP
+#     Value: !GetAtt vpc.Outputs.OutBastionEIP
