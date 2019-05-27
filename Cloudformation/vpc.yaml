@@ -48,6 +48,10 @@ Resources:
       AvailabilityZone: !Select [0, !GetAZs ]
       CidrBlock: !Sub 10.${NetworkClassB}.0.0/24
       VpcId: !Ref VPC
+      MapPublicIpOnLaunch: True
+      Tags:
+      - Key: Name
+        Value: !Sub SubnetPublicA-VPC${NetworkClassB}
 
   SubnetPrivateA:
     Type: AWS::EC2::Subnet
@@ -55,6 +59,9 @@ Resources:
       AvailabilityZone: !Select [0, !GetAZs ]
       CidrBlock: !Sub 10.${NetworkClassB}.2.0/24
       VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub SubnetPrivateA-VPC${NetworkClassB}
 
   RouteTablePublic:
     Type: AWS::EC2::RouteTable

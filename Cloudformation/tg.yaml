@@ -85,40 +85,40 @@ Resources:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref routeTablePublic1
-      DestinationCidrBlock: 10.2.0.0/16
+      DestinationCidrBlock: 10.0.0.0/8
       TransitGatewayId: !Ref TransitGateway
 
-  RouteTablePublic1Route2:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref routeTablePublic1
-      DestinationCidrBlock: 10.3.0.0/16
-      TransitGatewayId: !Ref TransitGateway
+  # RouteTablePublic1Route2:
+  #   Type: AWS::EC2::Route
+  #   Properties:
+  #     RouteTableId: !Ref routeTablePublic1
+  #     DestinationCidrBlock: 10.3.0.0/16
+  #     TransitGatewayId: !Ref TransitGateway
 
   RouteTablePublic2Route1:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref routeTablePublic2
-      DestinationCidrBlock: 10.1.0.0/16
+      DestinationCidrBlock: 10.0.0.0/8
       TransitGatewayId: !Ref TransitGateway
 
-  RouteTablePublic2Route2:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref routeTablePublic2
-      DestinationCidrBlock: 10.3.0.0/16
-      TransitGatewayId: !Ref TransitGateway
+  # RouteTablePublic2Route2:
+  #   Type: AWS::EC2::Route
+  #   Properties:
+  #     RouteTableId: !Ref routeTablePublic2
+  #     DestinationCidrBlock: 10.3.0.0/16
+  #     TransitGatewayId: !Ref TransitGateway
 
   RouteTablePublic3Route1:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref routeTablePublic3
-      DestinationCidrBlock: 10.1.0.0/16
+      DestinationCidrBlock: 10.0.0.0/8
       TransitGatewayId: !Ref TransitGateway
 
-  RouteTablePublic3Route2:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref routeTablePublic3
-      DestinationCidrBlock: 10.2.0.0/16
-      TransitGatewayId: !Ref TransitGateway
+  # RouteTablePublic3Route2:
+  #   Type: AWS::EC2::Route
+  #   Properties:
+  #     RouteTableId: !Ref routeTablePublic3
+  #     DestinationCidrBlock: 10.2.0.0/16
+  #     TransitGatewayId: !Ref TransitGateway

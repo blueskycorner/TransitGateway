@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Test TG - EC2
+
+Parameters:
+  ProjectName:
+    Description: project name
+    Type: String
+  ami:
+    Description: project name
+    Type: String
+    Default: ami-0c6b1d09930fac512
+  vpc1:
+    Description: VPC 1
+    Type: String
+  vpc1PublicSubnetA:
+    Description: VPC 1 public subnet A
+    Type: String
+  vpc2:
+    Description: VPC 2
+    Type: String
+  vpc2PublicSubnetA:
+    Description: VPC 2 public subnet A
+    Type: String
+  vpc3:
+    Description: VPC 3
+    Type: String
+  vpc3PublicSubnetA:
+    Description: VPC 3 public subnet A
+    Type: String
+
+Resources:
+  # sgVPC1IngressVPC2:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties: 
+  #     IpProtocol: icmp
+  #     SourceSecurityGroupId: !Ref sgVpc1
+  #     FromPort: 0
+  #     ToPort: 65535
+  #     GroupId: !Ref sgVpc2
+
+  # sgVPC2Ingress:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties: 
+  #     IpProtocol: icmp
+  #     SourceSecurityGroupId: !Ref sgVpc2
+  #     FromPort: 0
+  #     ToPort: 65535
+
+  # sgVPC3Ingress:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties: 
+  #     IpProtocol: icmp
+  #     SourceSecurityGroupId: !Ref sgVpc3
+  #     FromPort: 0
+  #     ToPort: 65535
+
+  sgVpc1:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Security group for VPC1
+      GroupName: VPC1
+      SecurityGroupIngress: 
+      - IpProtocol: tcp
+        CidrIp: 0.0.0.0/0
+        FromPort: 22
+        ToPort: 22
+      # - IpProtocol: icmp
+      #   SourceSecurityGroupId: !Ref sgVpc2
+      #   FromPort: 0
+      #   ToPort: 65535
+      # - IpProtocol: icmp
+      #   SourceSecurityGroupId: !Ref sgVpc3
+      #   FromPort: 0
+      #   ToPort: 65535
+      VpcId: !Ref vpc1
+      Tags:
+      - Key: Name
+        Value: SG-VPC1
+
+  sgVpc2:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Security group for VPC2
+      GroupName: VPC2
+      SecurityGroupIngress: 
+      - IpProtocol: tcp
+        CidrIp: 0.0.0.0/0
+        FromPort: 22
+        ToPort: 22
+      - IpProtocol: icmp
+        CidrIp: 10.1.0.0/16
+        FromPort: -1
+        ToPort: -1
+      # - IpProtocol: icmp
+      #   CidrIp: !GetAtt vpc3.CidrBlock
+      #   FromPort: 0
+      #   ToPort: 65535
+      VpcId: !Ref vpc2
+      Tags:
+      - Key: Name
+        Value: SG-VPC2
+      
+  sgVpc3:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Security group for VPC3
+      GroupName: VPC3
+      SecurityGroupIngress: 
+      - IpProtocol: tcp
+        CidrIp: 0.0.0.0/0
+        FromPort: 22
+        ToPort: 22
+      - IpProtocol: icmp
+        CidrIp: 10.1.0.0/16
+        FromPort: -1
+        ToPort: -1
+      # - IpProtocol: icmp
+      #   CidrIp: !GetAtt vpc1.CidrBlock
+      #   FromPort: 0
+      #   ToPort: 65535
+      VpcId: !Ref vpc3
+      Tags:
+      - Key: Name
+        Value: SG-VPC3
+
+  instanceVPC1:
+    Type: AWS::EC2::Instance
+    Properties: 
+      KeyName: vygon-bastion-dev
+      ImageId: !Ref ami
+      InstanceType: t2.micro
+      SecurityGroupIds: 
+      - !Ref sgVpc1
+      SubnetId: !Ref vpc1PublicSubnetA
+      Tags: 
+      - Key: Name
+        Value: instanceVPC1
+
+  instanceVPC2:
+    Type: AWS::EC2::Instance
+    Properties: 
+      KeyName: vygon-bastion-dev
+      ImageId: !Ref ami
+      InstanceType: t2.micro
+      SecurityGroupIds: 
+      - !Ref sgVpc2
+      SubnetId: !Ref vpc2PublicSubnetA
+      Tags: 
+      - Key: Name
+        Value: instanceVPC2
+
+  instanceVPC3:
+    Type: AWS::EC2::Instance
+    Properties: 
+      KeyName: vygon-bastion-dev
+      ImageId: !Ref ami
+      InstanceType: t2.micro
+      SecurityGroupIds: 
+      - !Ref sgVpc3
+      SubnetId: !Ref vpc3PublicSubnetA
+      Tags: 
+      - Key: Name
+        Value: instanceVPC3

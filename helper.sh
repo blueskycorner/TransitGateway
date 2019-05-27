@@ -23,7 +23,7 @@ usage()
 upload()
 {
     # aws s3 cp ./ s3://${TEMPLATE_BUCKET}/test1 --recursive  --exclude "root.yaml" --include "*.yaml" --profile ${AWS_PROFILE}
-    aws s3 cp ./ s3://${TEMPLATE_BUCKET}/testTG --recursive  --exclude "*.sh" --exclude "*.json" --include "*.yaml" --exclude "root.yaml" --profile ${AWS_PROFILE}
+    aws s3 cp ./Cloudformation s3://${TEMPLATE_BUCKET}/testTG --recursive  --exclude "*.sh" --exclude "*.json" --include "*.yaml" --exclude "root.yaml" --profile ${AWS_PROFILE}
     # aws s3 cp ./StartScheduledInstances.zip s3://${TEMPLATE_BUCKET}/lambda/StartScheduledInstances.zip --profile ${AWS_PROFILE}
     # aws s3 cp ./StopScheduledInstances.zip s3://${TEMPLATE_BUCKET}/lambda/StopScheduledInstances.zip --profile ${AWS_PROFILE}
 }
@@ -73,7 +73,7 @@ if [ $1 == "deploy" ]; then
     # Deploy stack
     aws cloudformation deploy  \
         --stack-name $STACK_NAME \
-        --template-file ./${TEMPLATE_NAME}  \
+        --template-file ./Cloudformation/${TEMPLATE_NAME}  \
         --parameter-overrides TemplateBucket=${TEMPLATE_BUCKET} \
                               ProjectName=${PROJECT_NAME} \
         --capabilities CAPABILITY_IAM \
